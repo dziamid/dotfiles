@@ -1,0 +1,38 @@
+#lamp
+alias a2='sudo service apache2'
+alias vhosts='sudo mc /etc/apache2/'
+alias debug='export XDEBUG_CONFIG="remote_enable=1"'
+alias undebug='unset XDEBUG_CONFIG'
+
+#symfony
+alias s='symfony'
+alias build-all-load='s doctrine:build --all --and-load --no-confirmation'
+alias build-all='s doctrine:build --all --no-confirmation'
+alias data-load='s doctrine:data-load'
+alias s2='./app/console'
+
+#terminal
+alias ll='ls -alh'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
+#alias rmdir-empty='find /home/mymusic -type d -print0 | xargs -0 rmdir --ignore-fail-on-non-empty --parents'
+function rmdir-empty {
+  find $1 -type d -print0 | xargs -0 rmdir --ignore-fail-on-non-empty --parents
+}
+alias nn=nano
+alias ea='nano ~/bin/dotfiles/bash/aliases && reload'
+alias ee='nano ~/bin/dotfiles/bash/env && reload'
+alias ec='nano ~/bin/dotfiles/bash/config && reload'
+
+alias h='history'
+alias reload='source ~/.bashrc'
+#git
+alias git-hard-reset='git reset --hard HEAD'
+alias git-add-all='git add -A .'
+alias g='git status'
+function gg {
+  git commit -m "$*"
+}

@@ -1,0 +1,18 @@
+Host *
+  ControlPath ~/.ssh/master-%l-%r@%h:%p
+  ControlMaster auto
+
+Host belgim
+
+    HostName www.belgim.by
+    User hik13
+    Port 4333
+    ServerAliveInterval 30
+    ServerAliveCountMax 120
+
+Host dream
+    HostName 93.84.118.156
+    User dziamid
+    Port 22
+    ServerAliveInterval 30
+    ServerAliveCountMax 120
