@@ -26,3 +26,5 @@
   changed = green
   untracked = cyan
 
+[receive]
+  denyCurrentBranch = ignore
