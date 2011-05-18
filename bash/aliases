@@ -17,6 +17,10 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
+function take {
+  mkdir $1
+  cd $1
+}
 
 #alias rmdir-empty='find /home/mymusic -type d -print0 | xargs -0 rmdir --ignore-fail-on-non-empty --parents'
 function rmdir-empty {
