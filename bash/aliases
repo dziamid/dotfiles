@@ -12,7 +12,9 @@ alias data-load='s doctrine:data-load'
 alias s2='./app/console'
 
 #terminal
-alias ll='ls -alh'
+alias untar='tar -zxvf'
+alias la='ls -alh --color=auto'
+alias ll='ls -lh --color=auto'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -35,8 +37,11 @@ alias h='history'
 alias reload='source ~/.bashrc'
 #git
 alias git-hard-reset='git reset --hard HEAD'
-alias git-add-all='git add -A .'
+alias ga='git add -A .'
 alias g='git status'
 function gg {
   git commit -m "$*"
 }
+alias gd='git diff'
+alias gl='git log'
+alias gb='git branch'
