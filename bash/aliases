@@ -5,16 +5,20 @@ alias debug='export XDEBUG_CONFIG="remote_enable=1"'
 alias undebug='unset XDEBUG_CONFIG'
 
 #symfony
-alias s='symfony'
+alias s='./symfony'
 alias build-all-load='s doctrine:build --all --and-load --no-confirmation'
 alias build-all='s doctrine:build --all --no-confirmation'
 alias data-load='s doctrine:data-load'
 alias s2='./app/console'
 
 #terminal
+alias tarf='tar -cvzf'
+alias untarf='tar -zxvf'
+
 alias untar='tar -zxvf'
 alias la='ls -alh --color=auto'
 alias ll='ls -lh --color=auto'
+alias cdln='cd -P'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
