@@ -6,15 +6,17 @@ alias undebug='unset XDEBUG_CONFIG'
 
 #symfony
 alias s='./symfony'
-alias build-all-load='s doctrine:build --all --and-load --no-confirmation'
-alias build-all='s doctrine:build --all --no-confirmation'
-alias data-load='s doctrine:data-load'
-alias s2='./app/console'
+alias d='doctrine'
+alias s.cc='s cc'
+alias sf='./app/console'
+alias d.d='s doctrine:dql'
+alias d.m='s doctrine:migrate'
+alias d.gm='s doctrine:generate-migrations-diff'
+alias d.bc='s doctrine:build --all-classes'
 
 #terminal
 alias tarf='tar -cvzf'
 alias untarf='tar -zxvf'
-
 alias untar='tar -zxvf'
 alias la='ls -alh --color=auto'
 alias ll='ls -lh --color=auto'
@@ -34,11 +36,11 @@ function rmdir-empty {
 }
 alias nn=nano
 alias ea='nano ~/bin/dotfiles/bash/aliases && reload'
-alias ee='nano ~/bin/dotfiles/bash/env && reload'
-alias ec='nano ~/bin/dotfiles/bash/config && reload'
+alias ee='nano ~/bin/dotfiles/bash/env'
+alias ec='nano ~/bin/dotfiles/bash/config'
 
 alias h='history'
-alias reload='source ~/.bashrc'
+alias reload='source ~/bin/dotfiles/bash/aliases'
 #git
 alias git-hard-reset='git reset --hard HEAD'
 alias ga='git add -A .'
@@ -46,6 +48,14 @@ alias g='git status'
 function gg {
   git commit -m "$*"
 }
+alias gga='git commit --amend'
 alias gd='git diff'
 alias gl='git log'
 alias gb='git branch'
+alias gdc='git diff --cached'
+alias gc='git checkout'
+alias gcp='git cherry-pick'
+alias ghr='git reset --hard'
+alias gr='git reset HEAD'
+alias gpr='git pull --rebase'
+alias gf='git fetch'
