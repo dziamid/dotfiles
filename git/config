@@ -29,4 +29,4 @@
 [receive]
   denyCurrentBranch = ignore
 [core]
-	excludesfile = /home/dziamid/bin/.gitignore
+  excludesfile = /home/dziamid/bin/.gitignore
