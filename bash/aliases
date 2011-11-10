@@ -9,8 +9,12 @@ alias s='./symfony'
 alias d='doctrine'
 alias s.cc='s cc'
 alias sf='./app/console'
+alias sf.cc="sf cache:clear"
 alias sf.gb='sf generate:bundle'
-alias sf.cc='sf cache:clear'
+alias sf.ge='sf doctrine:generate:entity'
+alias sf.gc='sf doctrine:generate:crud'
+alias sf.su='sf doctrine:schema:update --force'
+
 alias d.d='s doctrine:dql'
 alias d.m='s doctrine:migrate'
 alias d.md='s doctrine:migrate --down'
