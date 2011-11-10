@@ -1,16 +1,20 @@
 #lamp
 alias a2='sudo service apache2'
 alias vhosts='sudo mc /etc/apache2/'
-alias debug='export XDEBUG_CONFIG="remote_enable=1"'
-alias undebug='unset XDEBUG_CONFIG'
+alias debug="export XDEBUG_CONFIG='idekey=PHPSTORM remote_host=localhost';export SERVER_PORT=80;export SERVER_NAME=localhost"
+alias undebug="unset XDEBUG_CONFIG;unset SERVER_PORT;unset SERVER_NAME"
 
 #symfony
 alias s='./symfony'
 alias d='doctrine'
 alias s.cc='s cc'
 alias sf='./app/console'
+alias sf.gb='sf generate:bundle'
+alias sf.cc='sf cache:clear'
 alias d.d='s doctrine:dql'
 alias d.m='s doctrine:migrate'
+alias d.md='s doctrine:migrate --down'
+alias d.mu='s doctrine:migrate --up'
 alias d.gm='s doctrine:generate-migrations-diff'
 alias d.bc='s doctrine:build --all-classes'
 
@@ -59,4 +63,4 @@ alias ghr='git reset --hard'
 alias gr='git reset HEAD'
 alias gpr='git pull --rebase'
 alias gf='git fetch'
-
+alias gp='git push'
