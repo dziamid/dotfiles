@@ -1,8 +1,15 @@
+#!/bin/bash
+function g.br {
+  br=`git branch | grep "*"`
+  echo ${br/* /}
+}
+
+
 #lamp
 alias a2='sudo service apache2'
 alias vhosts='sudo mc /etc/apache2/'
-alias debug="export XDEBUG_CONFIG='idekey=PHPSTORM remote_host=localhost';export SERVER_PORT=80;export SERVER_NAME=localhost"
-alias undebug="unset XDEBUG_CONFIG;unset SERVER_PORT;unset SERVER_NAME"
+alias debug="export XDEBUG_CONFIG='idekey=PHPSTORM remote_host=localhost';export SERVER_PORT=80;export SERVER_NAME=localhost;export REQUEST_URI=localhost"
+alias undebug="unset XDEBUG_CONFIG;unset SERVER_PORT;unset SERVER_NAME;unset REQUEST_URI"
 
 #symfony
 alias s='./symfony'
@@ -14,13 +21,28 @@ alias sf.gb='sf generate:bundle'
 alias sf.ge='sf doctrine:generate:entity'
 alias sf.gc='sf doctrine:generate:crud'
 alias sf.su='sf doctrine:schema:update --force'
+alias sf.fl='sf doctrine:fixtures:load'
+function sf.dda {
+  sf doctrine:query:dql "$*" --hydrate="array"
+}
+function sf.dd {
+  sf doctrine:query:dql "$*"
+}
 
-alias d.d='s doctrine:dql'
+function d.d {
+  s doctrine:dql "$*"
+}
+
 alias d.m='s doctrine:migrate'
 alias d.md='s doctrine:migrate --down'
 alias d.mu='s doctrine:migrate --up'
-alias d.gm='s doctrine:generate-migrations-diff'
+alias d.gmd='s doctrine:generate-migrations-diff'
+alias d.gm='s iGivings:generate-migration'
+alias d.sm='s iGivings:migration-version-set'
+
 alias d.bc='s doctrine:build --all-classes'
+alias d.ba='s doctrine:build --all'
+alias d.dl='s doctrine:data-load'
 
 #terminal
 alias tarf='tar -cvzf'
@@ -49,8 +71,8 @@ alias ec='nano ~/bin/dotfiles/bash/config'
 
 alias h='history'
 alias reload='source ~/bin/dotfiles/bash/aliases'
+
 #git
-alias git-hard-reset='git reset --hard HEAD'
 alias ga='git add -A .'
 alias g='git status'
 function gg {
@@ -58,13 +80,17 @@ function gg {
 }
 alias gga='git commit --amend'
 alias gd='git diff'
-alias gl='git log'
-alias gb='git branch'
 alias gdc='git diff --cached'
-alias gc='git checkout'
-alias gcp='git cherry-pick'
-alias ghr='git reset --hard'
-alias gr='git reset HEAD'
-alias gpr='git pull --rebase'
-alias gf='git fetch'
-alias gp='git push'
+
+alias g.c='git checkout'
+alias g.r='git reset'
+alias g.f='git fetch'
+alias g.p='git push'
+alias g.a='git add'
+alias g.cp='git cherry-pick'
+
+function g.ff {
+  command='git rebase origin/'
+  command+=`g.br`
+  $command
+}
