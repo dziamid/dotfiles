@@ -1,8 +1,4 @@
 #!/bin/bash
-function g.br {
-  br=`git branch | grep "*"`
-  echo ${br/* /}
-}
 
 
 #lamp
@@ -11,38 +7,65 @@ alias vhosts='sudo mc /etc/apache2/'
 alias debug="export XDEBUG_CONFIG='idekey=PHPSTORM remote_host=localhost';export SERVER_PORT=80;export SERVER_NAME=localhost;export REQUEST_URI=localhost"
 alias undebug="unset XDEBUG_CONFIG;unset SERVER_PORT;unset SERVER_NAME;unset REQUEST_URI"
 
-#symfony
-alias s='./symfony'
-alias d='doctrine'
-alias s.cc='s cc'
-alias sf='./app/console'
-alias sf.cc="sf cache:clear"
-alias sf.gb='sf generate:bundle'
-alias sf.ge='sf doctrine:generate:entity'
-alias sf.gc='sf doctrine:generate:crud'
-alias sf.su='sf doctrine:schema:update --force'
-alias sf.fl='sf doctrine:fixtures:load'
-function sf.dda {
-  sf doctrine:query:dql "$*" --hydrate="array"
+#symfony common (1, 2)
+function sf-ver {
+  if [ -f ./symfony ]
+  then
+      echo 1
+  elif [ -f ./app/console ]
+  then
+      echo 2
+  else
+      echo 0
+  fi
 }
-function sf.dd {
-  sf doctrine:query:dql "$*"
+
+function s {
+  if [ "$(sf-ver)" = '1' ]
+  then
+      ./symfony $*
+  elif [ "$(sf-ver)" = '2' ]
+  then
+      ./app/console $*
+  else
+     echo "No symfony project found"
+  fi
+}
+
+alias s.cc="s cache:clear"
+alias s.gb='s generate:bundle'
+alias s.ge='s doctrine:generate:entity'
+alias s.gc='s doctrine:generate:crud'
+alias s.su='s doctrine:schema:update --force'
+alias s.fl='s doctrine:fixtures:load'
+
+function d.da {
+  s doctrine:query:dql "$*" --hydrate="array"
 }
 
 function d.d {
-  s doctrine:dql "$*"
+    if [ "$(sf-ver)" = '1' ]
+    then
+        ./symfony doctrine:dql "$*"
+    elif [ "$(sf-ver)" = '2' ]
+    then
+        ./app/console doctrine:query:dql "$*"
+    else
+        echo "No symfony project found"
+    fi
 }
 
+#symfony 1
 alias d.m='s doctrine:migrate'
-alias d.md='s doctrine:migrate --down'
-alias d.mu='s doctrine:migrate --up'
 alias d.gmd='s doctrine:generate-migrations-diff'
 alias d.gm='s iGivings:generate-migration'
-alias d.sm='s iGivings:migration-version-set'
-
+alias d.smv='s iGivings:migration-version-set'
 alias d.bc='s doctrine:build --all-classes'
-alias d.ba='s doctrine:build --all'
 alias d.dl='s doctrine:data-load'
+function d.ba {
+  s doctrine:build --all
+  d.smv
+}
 
 #terminal
 alias tarf='tar -cvzf'
@@ -60,11 +83,6 @@ function take {
   cd $1
 }
 
-#alias rmdir-empty='find /home/mymusic -type d -print0 | xargs -0 rmdir --ignore-fail-on-non-empty --parents'
-function rmdir-empty {
-  find $1 -type d -print0 | xargs -0 rmdir --ignore-fail-on-non-empty --parents
-}
-alias nn=nano
 alias ea='nano ~/bin/dotfiles/bash/aliases && reload'
 alias ee='nano ~/bin/dotfiles/bash/env'
 alias ec='nano ~/bin/dotfiles/bash/config'
@@ -73,6 +91,11 @@ alias h='history'
 alias reload='source ~/bin/dotfiles/bash/aliases'
 
 #git
+function g.br {
+  br=`git branch | grep "*"`
+  echo ${br/* /}
+}
+
 alias ga='git add -A .'
 alias g='git status'
 function gg {
@@ -84,13 +107,19 @@ alias gdc='git diff --cached'
 
 alias g.c='git checkout'
 alias g.r='git reset'
+alias g.rb='git rebase'
 alias g.f='git fetch'
 alias g.p='git push'
 alias g.a='git add'
 alias g.cp='git cherry-pick'
-
+alias g.m='git merge'
+alias g.s='git stash'
+alias g.sp='git stash pop'
+alias g.l='git log'
+alias g.b='git branch'
 function g.ff {
-  command='git rebase origin/'
-  command+=`g.br`
-  $command
+  c='git rebase origin/'
+  b=`git branch | grep "*"`
+  c+=${b/* /}
+  $c
 }
