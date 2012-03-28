@@ -1,5 +1,5 @@
 export CDPATH=".:~/dev"
 export EDITOR="nano"
-export PATH=$PATH:~/bin
+export PATH=$PATH:~/bin:~/bin/dotfiles/vendor
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # This loads RVM into a shell session
