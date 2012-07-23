@@ -32,39 +32,45 @@ function s {
   fi
 }
 
-alias s.cc="s cache:clear"
-alias s.gb='s generate:bundle'
-alias s.ge='s doctrine:generate:entity'
-alias s.gc='s doctrine:generate:crud'
-alias s.su='s doctrine:schema:update --force'
-alias s.fl='s doctrine:fixtures:load'
-
-function d.da {
-  s doctrine:query:dql "$*" --hydrate="array"
-}
-
-function d.d {
-    if [ "$(sf-ver)" = '1' ]
-    then
-        ./symfony doctrine:dql "$*"
-    elif [ "$(sf-ver)" = '2' ]
-    then
-        ./app/console doctrine:query:dql "$*"
-    else
-        echo "No symfony project found"
-    fi
-}
 
 #symfony 1
-alias d.m='s doctrine:migrate'
-alias d.gmd='s doctrine:generate-migrations-diff'
-alias d.gm='s iGivings:generate-migration'
-alias d.smv='s iGivings:migration-version-set'
-alias d.bc='s doctrine:build --all-classes'
-alias d.dl='s doctrine:data-load'
-function d.ba {
+alias 1.migrate='s doctrine:migrate'
+alias 1.migrate.diff='s doctrine:generate-migrations-diff'
+alias 1.migrate.empty='s doctrine:generate-migration'
+alias 1.migrate.setversion='s doctrine:migration-version-set'
+alias 1.build.classes='s doctrine:build --all-classes'
+alias 1.data.load='s doctrine:data-load'
+function 1.query {
+  ./symfony doctrine:dql "$*"
+}
+
+function 1.build.all {
   s doctrine:build --all
-  d.smv
+  1.migrate.setversion
+}
+
+function 1.build.database {
+  s doctrine:drop-db
+  s doctrine:build-db
+  s doctrine:insert-sql
+  1.migrate.setversion
+
+  #todo: check path, if igivings, then also load data
+  #1.data.load "data/local/fixtures.yml"
+  #s app:member-data "data/local/members.csv" 1
+}
+
+#symfony 2
+alias 2.gen.bundle='s generate:bundle'
+alias 2.gen.entity='s doctrine:generate:entity'
+alias 2.gen.crud='s doctrine:generate:crud'
+alias 2.fixtures.load='s doctrine:fixtures:load'
+alias 2.schema.dump='s doctrine:schema:update --dump-sql'
+alias 2.schema.update='s doctrine:schema:update --force'
+
+#2.query "select a from BGridBundle:Price\\Item a"
+function 2.query {
+  ./app/console doctrine:query:dql "$*" --hydrate="array"
 }
 
 #terminal
@@ -106,20 +112,31 @@ alias gd='git diff'
 alias gdc='git diff --cached'
 
 alias g.c='git checkout'
+alias g.cc='git checkout .'
 alias g.r='git reset'
 alias g.rb='git rebase'
 alias g.f='git fetch'
 alias g.p='git push'
 alias g.a='git add'
 alias g.cp='git cherry-pick'
+alias g.cl='git clean -f'
 alias g.m='git merge'
 alias g.s='git stash'
 alias g.sp='git stash pop'
 alias g.l='git log'
 alias g.b='git branch'
 function g.ff {
-  c='git rebase origin/'
-  b=`git branch | grep "*"`
-  c+=${b/* /}
+  l=`g.br`
+  u=`git config branch.$l.remote`
+  
+  c="git rebase $u/$l"
+  echo "Executing $c"  
   $c
 }
+
+
+# d.da select m,i from LTDeliveryBundle:Menu m left join m.items i
+# d.da select m,i from LTDeliveryBundle:Menu m join m.items i
+
+alias print='rdesktop  -g 1300x800 -u d.zayankouski -d RICHBRAINS -p 123456789 -r disk:home=/home/dziamid -r clipboard:CLIPBOARD -r sound:off 10.10.1.9'
+

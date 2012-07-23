@@ -1,6 +1,3 @@
-Host *
-  ControlPath ~/.ssh/master-%l-%r@%h:%p
-  ControlMaster auto
 
 Host belgim
 
@@ -16,3 +13,13 @@ Host dream
     Port 22
     ServerAliveInterval 30
     ServerAliveCountMax 120
+
+Host gateway
+    HostName ec2-50-18-79-102.us-west-1.compute.amazonaws.com
+    User root
+    ControlPath ~/.ssh/control-%h
+    IdentityFile /home/dziamid/documents/gateway/igivings_rsa 
+
+Host *
+  ControlPath ~/.ssh/master-%l-%r@%h:%p
+  ControlMaster auto

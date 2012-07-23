@@ -30,3 +30,6 @@
   denyCurrentBranch = ignore
 [core]
   excludesfile = /home/dziamid/bin/.gitignore
+
+[push]
+  default = upstream

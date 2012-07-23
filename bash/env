@@ -1,5 +1,9 @@
 export CDPATH=".:~/dev"
 export EDITOR="nano"
-export PATH=$PATH:~/bin:~/bin/dotfiles/vendor
-
+export PATH=$PATH:~/bin:~/bin/dotfiles/vendor:$HOME/.rbenv/bin
+export SYMFONY_ASSETS_INSTALL="symlink"
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # This loads RVM into a shell session
+
+eval "$(rbenv init -)"
+
+export JS_ENGINE="node"
