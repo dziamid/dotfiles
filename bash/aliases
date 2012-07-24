@@ -50,14 +50,29 @@ function 1.build.all {
 }
 
 function 1.build.database {
-  s doctrine:drop-db
+  s doctrine:drop-db --no-confirmation
   s doctrine:build-db
   s doctrine:insert-sql
   1.migrate.setversion
+}
 
-  #todo: check path, if igivings, then also load data
-  #1.data.load "data/local/fixtures.yml"
-  #s app:member-data "data/local/members.csv" 1
+function 1.build.load {
+path=`pwd`
+1.build.database
+#if [ $? != 0 ] then exit $? fi
+
+if [ $path == '/home/dziamid/dev/wizard' ]
+  then
+      1.data.load "data/local/fixtures.yml"
+  elif [ $path == '/home/dziamid/dev/igivings' ]
+      1.data.load "data/local/fixtures.yml"
+  then
+      1.data.load "data/local/fixtures"
+      ./symfony app:member-data "data/local/members.csv" 1
+#  else
+##add other projects
+  fi
+
 }
 
 #symfony 2
