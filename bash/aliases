@@ -4,8 +4,8 @@
 #lamp
 alias a2='sudo service apache2'
 alias vhosts='sudo mc /etc/apache2/'
-alias debug="export XDEBUG_CONFIG='idekey=PHPSTORM remote_host=localhost';export SERVER_PORT=80;export SERVER_NAME=localhost;export REQUEST_URI=localhost"
-alias undebug="unset XDEBUG_CONFIG;unset SERVER_PORT;unset SERVER_NAME;unset REQUEST_URI"
+alias debug="export XDEBUG_SESSION_START=1;export XDEBUG_CONFIG='idekey=PHPSTORM remote_host=localhost';export SERVER_PORT=80;export SERVER_NAME=localhost;export REQUEST_URI=localhost"
+alias undebug="unset XDEBUG_SESSION_START;unset XDEBUG_CONFIG;unset SERVER_PORT;unset SERVER_NAME;unset REQUEST_URI"
 
 #symfony common (1, 2)
 function sf-ver {
@@ -61,17 +61,17 @@ path=`pwd`
 1.build.database
 #if [ $? != 0 ] then exit $? fi
 
-if [ $path == '/home/dziamid/dev/wizard' ]
-  then
+if [ $path == '/home/dziamid/dev/wizard' ] 
+then
       1.data.load "data/local/fixtures.yml"
-  elif [ $path == '/home/dziamid/dev/igivings' ]
+
+elif [ $path == '/home/dziamid/dev/igivings' ] 
+then
       1.data.load "data/local/fixtures.yml"
-  then
-      1.data.load "data/local/fixtures"
       ./symfony app:member-data "data/local/members.csv" 1
 #  else
 ##add other projects
-  fi
+fi
 
 }
 
