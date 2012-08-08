@@ -141,11 +141,21 @@ alias g.sp='git stash pop'
 alias g.l='git log'
 alias g.b='git branch'
 function g.ff {
-  l=`g.br`
-  u=`git config branch.$l.remote`
-  
-  c="git rebase $u/$l"
+  b=`g.oh`
+  c="git rebase $b"
   echo "Executing $c"  
+  $c
+}
+
+function g.obr {
+  l=`g.br`
+  r=`git config branch.$l.remote`
+  echo "$r/$l"
+}
+
+function g.oh {
+  b=`g.obr`
+  c="git log $b -n 1 --pretty=format:%H"
   $c
 }
 
