@@ -1,0 +1,130 @@
+FIX LOCALE if some entries are missing in "locale":
+	locale-gen en_US.UTF-8
+	update-locale LANG=en_US.UTF-8
+	restart
+
+UPDATE SYSTEM AND ADD MISSING SORTWARE:
+	apt-get install nano git curl htop python-software-properties
+
+CREATE USER
+	addgroup admin
+	adduser dziamid
+	adduser dziamid admin
+	cat /home/dziamid/.ssh/id_rsa.pub | xclip -sel clip (on local pc)
+	paste in /home/dziamid/authorized_keys (on server)
+	mkdir bin && git clone https://github.com/dziamid/dotfiles.git bin/dotfiles
+	ln -s bin/dotfiles/bashrc .bashrc
+	ln -s bin/dotfiles/git/config .gitconfig
+	touch bin/.gitignore
+
+NGINX AND SERVICES:
+
+	apt-get install chkconfig
+	ln -s /usr/lib/insserv/insserv /sbin/insserv
+	service apache2 stop
+	chkconfig apache2 off
+	chkconfig nginx on
+	fix default website: 
+		/etc/nginx/sites-available/default:
+		server {
+			root /var/www;
+			index index.html index.htm;
+			charset utf-8;
+		}
+
+	
+
+
+POSTGRSQL:
+	apt-get install postgresql
+	change postgres auth:
+		sudo -u postgres psql
+		ALTER USER postgres with encrypted password 'postgres';
+		nano /etc/postgresql/9.1/main/pg_hba.conf:
+			change local connection auth method from 'peer' to 'md5':
+			local   all             postgres                                md5
+			local   all             all                                     md5
+
+
+		
+
+PHP 
+	sudo add-apt-repository ppa:ondrej/php5
+	apt-get install php5 php5-fpm php5-cli php5-intl php-apc php5-curl php-pear php5-imagick php5-sqlite php5-xsl php5-pgsql
+	sudo chown -R dziamid:dziamid /var/www
+	scp /home/dziamid/lib/check_configuration.php dream:/var/www
+
+	/etc/nginx/sites-available/default
+	fix server names
+	add index.php to index
+	uncomment location ~ \.php$ stanza
+	make nginx use sockets instead of tcp:
+		fix listen 80
+		fix fastcgi_pass unix:/var/run/php5-fpm.sock in php stanza
+
+	add date.timezone = Europe/Minsk
+	/etc/php5/cli/php.ini
+	/etc/php5/fpm/php.ini
+
+	fix permissions umask
+		/etc/init.d/php5-fpm
+		UMASK="0002"
+		add --umask $UMASK to start-stop-deamon
+
+
+SYMFONY config
+	curl -s https://getcomposer.org/installer | php
+	mv composer.phar ~/bin/composer
+	composer create-project symfony/framework-standard-edition symfony-standard
+	php app/check.php
+	php app/console doctrine:database:create
+	fix cache/log permissions: http://stackoverflow.com/questions/7845666/php-symfony2-installation-cache-permissions/11359414#11359414
+
+
+ADD necessary nginx servers:
+	server {
+	  listen 80;
+	  server_name dev.marseille.by;
+	  root /var/www/symfony-standard/web;
+
+	  location / {
+	    index app.php;
+	    if (-f $request_filename) {
+	      break;
+	    }
+	    rewrite ^(.*)$ /app.php last;
+	  }
+
+	  location ~ (app|app_dev).php {
+	    include fastcgi_params;
+	    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+	    fastcgi_param PATH_INFO $fastcgi_path_info;
+	    fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+	    fastcgi_param HTTPS off;
+	    fastcgi_pass unix:/var/run/php5-fpm.sock;
+	  }
+	}        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
