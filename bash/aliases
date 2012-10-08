@@ -40,8 +40,9 @@ alias 1.migrate.empty='s doctrine:generate-migration'
 alias 1.migrate.setversion='s doctrine:migration-version-set'
 alias 1.build.classes='s doctrine:build --all-classes'
 alias 1.data.load='s doctrine:data-load'
+
 function 1.query {
-  ./symfony doctrine:dql "$*"
+  php symfony doctrine:dql "$1" $2
 }
 
 function 1.build.all {
@@ -59,6 +60,7 @@ function 1.build.database {
 function 1.build.load {
 path=`pwd`
 1.build.database
+git checkout "data/bible.sqlite"
 #if [ $? != 0 ] then exit $? fi
 
 if [ $path == '/home/dziamid/dev/wizard' ] 
@@ -117,6 +119,18 @@ function g.br {
   echo ${br/* /}
 }
 
+function selenium.start {
+  status selenium | grep "running" > /dev/null
+
+  if [ $? == 0 ]; then
+    echo 'selenium is running'
+  else
+    echo 'starting selenium'
+    start selenium&
+  fi
+
+}
+
 alias ga='git add -A .'
 alias g='git status'
 function gg {
@@ -168,5 +182,5 @@ alias print='rdesktop  -g 1300x800 -u d.zayankouski -d RICHBRAINS -p 123456789 -
 #pg_dump -h localhost -U postgres -W beta_wizard > dump-corp.sql
 #psql -f data/local/dump-corp.sql wizard -U postgres -W -h localhost
 
-alias behat="bin/behat"
+alias behat="selenium.start && bin/behat"
 alias behat.append-snippets="bin/behat --dry-run --append-snippets"
