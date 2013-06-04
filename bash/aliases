@@ -35,6 +35,7 @@ function s {
 
 #symfony 1
 alias 1.migrate='s doctrine:migrate'
+alias 1.migrate.all='s doctrine:migrate && s doctrine:migrate --env=test'
 alias 1.migrate.diff='s doctrine:generate-migrations-diff'
 alias 1.migrate.empty='s doctrine:generate-migration'
 alias 1.migrate.setversion='s doctrine:migration-version-set'
@@ -51,30 +52,18 @@ function 1.build.all {
 }
 
 function 1.build.database {
-  s doctrine:drop-db --no-confirmation
-  s doctrine:build-db
-  s doctrine:insert-sql
-  1.migrate.setversion
+  s doctrine:drop-db --no-confirmation $*
+  s doctrine:build-db $*
+  s doctrine:insert-sql $*
+  1.migrate.setversion $*
+  cp data/bible_orig.sqlite data/bible.sqlite
+  echo "Restored bible database from data/bible_orig.sqlite"
 }
 
 function 1.build.load {
-path=`pwd`
-1.build.database
-git checkout "data/bible.sqlite"
-#if [ $? != 0 ] then exit $? fi
-
-if [ $path == '/home/dziamid/dev/wizard' ] 
-then
-      1.data.load "data/local/fixtures.yml"
-
-elif [ $path == '/home/dziamid/dev/igivings' ] 
-then
-      1.data.load "data/local/fixtures.yml"
-      ./symfony app:member-data "data/local/members.csv" 1
-#  else
-##add other projects
-fi
-
+  1.build.database $*
+  1.data.load "data/local/fixtures.yml"
+  1.data.load "data/fixtures/" --append
 }
 
 #symfony 2
@@ -108,7 +97,7 @@ function take {
 
 alias ea='nano ~/bin/dotfiles/bash/aliases && reload'
 alias ee='nano ~/bin/dotfiles/bash/env'
-alias ec='nano ~/bin/dotfiles/bash/config'
+alias ec='nano ~/bin/dotfiles/bash/config && reload'
 
 alias h='history'
 alias reload='source ~/bin/dotfiles/bash/aliases'
@@ -131,10 +120,19 @@ function selenium.start {
 
 }
 
+function g.pff {
+  out=`g.p`
+  if [$? == 0]; then
+    echo "Push failed: $out"
+  else
+    echo "Pushed successfully"
+  fi
+}
+
 alias ga='git add -A .'
 alias g='git status'
 function gg {
-  git commit -m "$*"
+  git commit -e -m "`cat ~/dev/issue` $*"
 }
 alias gga='git commit --amend'
 alias gd='git diff'
@@ -154,10 +152,11 @@ alias g.s='git stash'
 alias g.sp='git stash pop'
 alias g.l='git log'
 alias g.b='git branch'
+alias xclip.clip='xclip -sel clip'
 function g.ff {
-  b=`g.oh`
+  b=`g.obr`
   c="git rebase $b"
-  echo "Executing $c"  
+  echo "Executing $c"
   $c
 }
 
@@ -168,9 +167,18 @@ function g.obr {
 }
 
 function g.oh {
-  b=`g.obr`
-  c="git log $b -n 1 --pretty=format:%H"
-  $c
+  branch=`g.br`
+  origin_branch=`g.obr`
+  branch_head=`git log $branch -n 1 --pretty=format:%H`
+  origin_branch_head=`git log $origin_branch -n 1 --pretty=format:%H`
+  #branch head and origin branch head should be the same
+  if [ $branch_head == $origin_branch_head ]
+  then
+      echo $origin_branch_head | xclip -sel clip
+      echo $origin_branch_head
+  else
+      echo "Local branch head ($branch_head) does not match origin branch head ($origin_branch_head). Did you forget to push?"
+  fi
 }
 
 
@@ -182,5 +190,61 @@ alias print='rdesktop  -g 1300x800 -u d.zayankouski -d RICHBRAINS -p 123456789 -
 #pg_dump -h localhost -U postgres -W beta_wizard > dump-corp.sql
 #psql -f data/local/dump-corp.sql wizard -U postgres -W -h localhost
 
-alias behat="selenium.start && bin/behat"
-alias behat.append-snippets="bin/behat --dry-run --append-snippets"
+function behat {
+  selenium.start
+  bin/behat --tags '~@bootstrap' $*
+}
+
+function behat.append-snippets {
+  bin/behat --dry-run --append-snippets $*
+}
+
+function behat.bootstrap {
+  bin/behat features/upgrades.feature --tags "bootstrap&&$1"
+}
+
+function cpv {
+#copy visible files from $1 to $2
+  command="rsync -a --exclude='.*' $1/ $2"
+  echo "executing $command"
+  $command
+}
+
+function freeze {
+  br=`g.br`
+  source=`pwd`
+  destination="$source-$br"
+  command="cpv $source $destination"
+  echo "executing $command"
+  $command
+}
+
+function task() {
+  dir=`pwd`
+  issue=`/usr/bin/php ~/dev/issue.php`
+  echo $issue
+}
+
+function untask() {
+  dir=`pwd`
+  echo "" > ~/dev/issue
+  echo "Cleaned up active issue"
+}
+
+function vtask() {
+  cat ~/dev/issue
+}
+
+#removes git conflict markers from give file
+function g.both() {
+  filename=$1
+  tempfilename="temp_file_used_by_git_both"
+  grep -v "<<<<<<<\|>>>>>>>\|=======" $filename > $tempfilename; mv $tempfilename $filename;
+
+}
+
+function 1.schema () {
+  1.migrate.diff
+  1.migrate
+  1.build.classes
+}
